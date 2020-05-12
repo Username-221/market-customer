@@ -1,0 +1,30 @@
+-
+  const tableStyle = `border-collapse: collapse; padding: 25px;
+  max-width: 800px; margin: 0 auto; font-family: Helvetica, sans-serif;`;
+table(width="100%" style=tableStyle)
+  tr
+    td(height="120px" width="100%" 
+    style="font-size: 2em; text-align: center; background-color: #eb3;")
+      | Password restoration form
+  tr
+    td(style="padding: 25px; font-size: 1.2em; color: #222;") 
+      | If you forgot your password, click button below.
+      br 
+      | Otherwise, ignore it.
+  tr
+    td(style="text-align: center;")
+      - 
+        const linkStyle = `padding: 15px 24px; background-color: #eb3;
+        display: inline-block; text-align: center; text-decoration: none;
+        color: #000; margin: 0 auto;`;
+
+      a(href=restoreLink style=linkStyle target="_blank")
+        | Click here to restore
+  tr
+    -
+    td(style="color: #555; font-size: 0.9em; padding: 50px 25px;")
+      | Request came from ip: 
+      span(style="color: #d55;")=ip
+      br
+      | User-agent: 
+      span(style="color: #d55;")=userAgent

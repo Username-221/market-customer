@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ESNext"
+    ],
+    "allowJs": true,
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "exclude": [
+    "test",
+    "node_modules"
+  ]
+}
