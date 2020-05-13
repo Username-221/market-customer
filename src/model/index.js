@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const defaultLogger = require('../logger');
-const mapSchemas = require('./schema-mapping');
+const models = require('./schema-mapping');
 
 const init = (db, logger = defaultLogger) => mongoose
   .connect(db.uri, {
@@ -15,6 +15,7 @@ const init = (db, logger = defaultLogger) => mongoose
     process.exit(-1);
   });
 
-const models = mapSchemas(mongoose.model);
-
-module.exports = { models, init };
+module.exports = {
+  models,
+  init,
+};
