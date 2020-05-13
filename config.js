@@ -1,4 +1,11 @@
-require('dotenv').config();
+const { join } = require('path');
+const { config: loadEnv } = require('dotenv');
+
+const environment = process.env.NODE_ENV;
+const envSuffix = environment === 'test' || environment === 'production'
+  ? '.'.concat(environment)
+  : '';
+loadEnv({ path: join(__dirname, `.env${envSuffix}`) });
 
 const {
   AUTH_SECRET,
@@ -19,10 +26,9 @@ const config = {
   db: {
     uri: DB_URI || 'mongodb://127.0.0.1:27017',
     dbName: DB_NAME || 'market',
-    auth: {
-      user: DB_USER,
-      password: DB_PASSWORD,
-    },
+    user: DB_USER,
+    pass: DB_PASSWORD,
+    autoCreate: true,
   },
   auth: {
     secret: AUTH_SECRET,
@@ -46,5 +52,12 @@ const config = {
     },
   },
 };
+
+// if (DB_USER) {
+//   config.db.auth = {
+//     user: DB_USER,
+//     password: DB_PASSWORD,
+//   };
+// }
 
 module.exports = config;

@@ -16,6 +16,9 @@
         "${workspaceFolder}/test/**/*.test.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "NODE_ENV": "test"
+      },
       "skipFiles": [
         "<node_internals>/**"
       ]

@@ -60,8 +60,4 @@ router.put('/change-password', async (req, res) => {
   res.end();
 });
 
-router.get('/email', async (_, res) => {
-  res.render('restore-template');
-});
-
 module.exports = router;

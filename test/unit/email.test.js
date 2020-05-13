@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const sinon = require('sinon');
 const { expect } = require('chai');
-const EmailService = require('../../../src/services/email');
+const EmailService = require('../../src/services/email');
 
 describe('EmailService', () => {
   const sandbox = sinon.createSandbox();
