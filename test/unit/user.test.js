@@ -3,10 +3,10 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const { Model } = require('mongoose');
-const logger = require('../../../src/logger');
-const UserService = require('../../../src/services/user');
-const authUtils = require('../../../src/utils/auth');
-const { userRequest, credentials } = require('../../fixtures/user');
+const logger = require('../../src/logger');
+const UserService = require('../../src/services/user');
+const authUtils = require('../../src/utils/auth');
+const { userRequest, credentials } = require('../fixtures/user');
 chai.use(require('chai-as-promised'));
 
 describe('UserService', () => {
