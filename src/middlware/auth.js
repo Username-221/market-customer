@@ -7,4 +7,13 @@ const jwtStrategy = new Strategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 }, (user, done) => done(null, user));
 
-module.exports = passport.use(jwtStrategy);
+const jwtWithExpirationStrategy = new Strategy({
+  secretOrKey: auth.secret,
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  ignoreExpiration: true,
+}, (user, done) => done(null, user));
+
+passport.use(jwtStrategy);
+passport.use('jwte', jwtWithExpirationStrategy);
+
+module.exports = passport;
