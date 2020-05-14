@@ -24,17 +24,17 @@ router.post('/register', async (req, res) => {
 });
 
 router.delete('/logout',
-  passport.authenticate('jwt'),
+  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const { user } = req;
+    const { user } = req.user;
     await userService.logout(user.id);
     res.end();
   });
 
 router.put('/refresh',
-  passport.authenticate('jwt', { ignoreExpiration: true }),
+  passport.authenticate('jwt', { ignoreExpiration: true, session: false }),
   async (req, res) => {
-    const { user } = req;
+    const { user } = req.user;
     const { refreshToken } = req.body;
     const tokens = await userService.refresh(user.id, refreshToken);
     res.json(tokens);

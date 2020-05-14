@@ -11,9 +11,18 @@ const {
 } = require('../../src/model').models;
 
 describe('User route', () => {
-  const agent = supertest.agent(app);
   const userPath = '/api/user';
+  const registerPath = `${userPath}/register`;
+  const agent = supertest.agent(app);
   const fakeTimer = sinon.useFakeTimers(new Date('2019-02-03'));
+
+  const makePostRequest = (uri) => agent
+    .post(uri)
+    .set('Content-Type', 'application/json');
+
+  const makePutRequest = (uri) => agent
+    .put(uri)
+    .set('Content-Type', 'application/json');
 
   beforeEach(async () => {
     await UserModel.remove({});
@@ -25,16 +34,10 @@ describe('User route', () => {
   });
 
   describe('POST /register', () => {
-    const path = `${userPath}/register`;
-    const requestBody = JSON.stringify(userRequest);
-    const getAgentTest = () => agent
-      .post(path)
-      .set('Content-Type', 'application/json');
-
     it('should return correct value', async () => {
-      const response = await getAgentTest()
+      const response = await makePostRequest(registerPath)
         .expect('Content-Type', /json/)
-        .send(requestBody);
+        .send(userRequest);
 
       expect(response.body.accessToken).to.be.a('string');
       expect(response.body.refreshToken).to.be.a('string');
@@ -42,9 +45,9 @@ describe('User route', () => {
     });
 
     it('should save user to DB', async () => {
-      await getAgentTest()
+      await makePostRequest(registerPath)
         .expect('Content-Type', /json/)
-        .send(requestBody);
+        .send(userRequest);
 
       const savedUsers = await UserModel.find({});
       const [user] = savedUsers;
@@ -56,14 +59,44 @@ describe('User route', () => {
     });
 
     it('should reject, because of user already exists', async () => {
-      await getAgentTest()
-        .send(requestBody);
-
-      const response = await getAgentTest()
+      await makePostRequest(registerPath)
+        .send(userRequest);
+      const response = await makePostRequest(registerPath)
         .expect(400)
-        .send(requestBody);
+        .send(userRequest);
 
       expect(response.error).to.have.property('text', 'Already registered');
+    });
+  });
+
+  describe('PUT /refresh', () => {
+    const resfreshPath = `${userPath}/refresh`;
+
+    it('should return new tokens pair', async () => {
+      const { body: tokens } = await makePostRequest(registerPath)
+        .send(userRequest);
+      const { accessToken, refreshToken } = tokens;
+      const { body: newTokens } = await makePutRequest(resfreshPath)
+        .auth(accessToken, { type: 'bearer' })
+        .send({ refreshToken });
+
+      expect(newTokens).to.have.property('accessToken');
+      expect(newTokens).to.have.property('refreshToken');
+    });
+
+    it('should save new tokens to db', async () => {
+      const { body: tokens } = await makePostRequest(registerPath)
+        .send(userRequest);
+      const { accessToken, refreshToken } = tokens;
+      const { body: newTokens } = await makePutRequest(resfreshPath)
+        .auth(accessToken, { type: 'bearer' })
+        .send({ refreshToken });
+
+      const result = await RefreshTokenModel.exists({
+        token: newTokens.refreshToken,
+      });
+
+      expect(result).to.be.true;
     });
   });
 });
