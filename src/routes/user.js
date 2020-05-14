@@ -32,7 +32,7 @@ router.delete('/logout',
   });
 
 router.put('/refresh',
-  passport.authenticate('jwt', { ignoreExpiration: true, session: false }),
+  passport.authenticate('jwte', { ignoreExpiration: true, session: false }),
   async (req, res) => {
     const { user } = req.user;
     const { refreshToken } = req.body;

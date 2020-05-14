@@ -4,7 +4,6 @@ const {
   encryptPassword,
   compare,
   generateSalt,
-  signJWT,
   generateTokenPair,
   generateRestoreToken,
 } = require('../utils/auth');
@@ -121,10 +120,6 @@ class UserService {
       $unset: { restore: '' },
     });
     this.logger.info('Password changed', { id });
-  }
-
-  static issueRestoreJWT(id) {
-    return signJWT({ restore: { id } });
   }
 
   static getSafeUser(user) {

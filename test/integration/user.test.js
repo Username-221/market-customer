@@ -3,6 +3,7 @@
 const { expect } = require('chai');
 const supertest = require('supertest');
 const sinon = require('sinon');
+const moment = require('moment');
 const app = require('../../src/app');
 const { userRequest } = require('../fixtures/user');
 const {
@@ -14,7 +15,6 @@ describe('User route', () => {
   const userPath = '/api/user';
   const registerPath = `${userPath}/register`;
   const agent = supertest.agent(app);
-  const fakeTimer = sinon.useFakeTimers(new Date('2019-02-03'));
 
   const makePostRequest = (uri) => agent
     .post(uri)
@@ -27,10 +27,6 @@ describe('User route', () => {
   beforeEach(async () => {
     await UserModel.remove({});
     await RefreshTokenModel.remove({});
-  });
-
-  after(() => {
-    fakeTimer.restore();
   });
 
   describe('POST /register', () => {
@@ -91,12 +87,26 @@ describe('User route', () => {
       const { body: newTokens } = await makePutRequest(resfreshPath)
         .auth(accessToken, { type: 'bearer' })
         .send({ refreshToken });
-
       const result = await RefreshTokenModel.exists({
         token: newTokens.refreshToken,
       });
 
       expect(result).to.be.true;
+    });
+
+    it('should accept expired token', async () => {
+      const timer = sinon.useFakeTimers(moment().subtract(1, 'day'));
+      const { body: tokens } = await makePostRequest(registerPath)
+        .expect(200)
+        .send(userRequest);
+      const { accessToken, refreshToken } = tokens;
+      timer.restore();
+      const result = await makePutRequest(resfreshPath)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(200)
+        .send({ refreshToken });
+
+      expect(result.ok).to.be.true;
     });
   });
 });
