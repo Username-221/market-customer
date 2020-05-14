@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 
-class ProductService {
+class CartService {
   /**
    * @param {types.DependencyContainer} container -
    */
@@ -34,4 +34,4 @@ class ProductService {
   }
 }
 
-module.exports = ProductService;
+module.exports = CartService;

@@ -5,6 +5,6 @@ const { auth } = require('../../config');
 const jwtStrategy = new Strategy({
   secretOrKey: auth.secret,
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-}, ({ user, restore }, done) => done(null, user || restore));
+}, (user, done) => done(null, user));
 
 module.exports = passport.use(jwtStrategy);

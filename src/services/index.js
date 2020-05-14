@@ -1,7 +1,6 @@
 const { models } = require('../model');
 const { emailTransport } = require('../utils/email');
 const logger = require('../logger');
-
 const CartService = require('./cart');
 const EmailService = require('./email');
 const ProductService = require('./product');
