@@ -97,11 +97,13 @@ describe('User route', () => {
     it('should accept expired token', async () => {
       const timer = sinon.useFakeTimers(moment().subtract(1, 'day'));
       const { body: tokens } = await makePostRequest(registerPath)
+        .expect(200)
         .send(userRequest);
       const { accessToken, refreshToken } = tokens;
       timer.restore();
       const result = await makePutRequest(resfreshPath)
         .auth(accessToken, { type: 'bearer' })
+        .expect(200)
         .send({ refreshToken });
 
       expect(result.ok).to.be.true;
