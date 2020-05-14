@@ -3,7 +3,6 @@
 const { expect } = require('chai');
 const supertest = require('supertest');
 const sinon = require('sinon');
-const moment = require('moment');
 const app = require('../../src/app');
 const { userRequest } = require('../fixtures/user');
 const {
@@ -16,12 +15,8 @@ describe('User route', () => {
   const registerPath = `${userPath}/register`;
   const agent = supertest.agent(app);
 
-  const makePostRequest = (uri) => agent
-    .post(uri)
-    .set('Content-Type', 'application/json');
-
-  const makePutRequest = (uri) => agent
-    .put(uri)
+  /** @returns {supertest.Test} */
+  const makeRequest = (uri, method = 'post') => agent[method](uri)
     .set('Content-Type', 'application/json');
 
   beforeEach(async () => {
@@ -31,7 +26,7 @@ describe('User route', () => {
 
   describe('POST /register', () => {
     it('should return correct value', async () => {
-      const response = await makePostRequest(registerPath)
+      const response = await makeRequest(registerPath)
         .expect('Content-Type', /json/)
         .send(userRequest);
 
@@ -41,7 +36,7 @@ describe('User route', () => {
     });
 
     it('should save user to DB', async () => {
-      await makePostRequest(registerPath)
+      await makeRequest(registerPath)
         .expect('Content-Type', /json/)
         .send(userRequest);
 
@@ -55,9 +50,9 @@ describe('User route', () => {
     });
 
     it('should reject, because of user already exists', async () => {
-      await makePostRequest(registerPath)
+      await makeRequest(registerPath)
         .send(userRequest);
-      const response = await makePostRequest(registerPath)
+      const response = await makeRequest(registerPath)
         .expect(400)
         .send(userRequest);
 
@@ -69,10 +64,10 @@ describe('User route', () => {
     const resfreshPath = `${userPath}/refresh`;
 
     it('should return new tokens pair', async () => {
-      const { body: tokens } = await makePostRequest(registerPath)
+      const { body: tokens } = await makeRequest(registerPath)
         .send(userRequest);
       const { accessToken, refreshToken } = tokens;
-      const { body: newTokens } = await makePutRequest(resfreshPath)
+      const { body: newTokens } = await makeRequest(resfreshPath, 'put')
         .auth(accessToken, { type: 'bearer' })
         .send({ refreshToken });
 
@@ -81,10 +76,10 @@ describe('User route', () => {
     });
 
     it('should save new tokens to db', async () => {
-      const { body: tokens } = await makePostRequest(registerPath)
+      const { body: tokens } = await makeRequest(registerPath)
         .send(userRequest);
       const { accessToken, refreshToken } = tokens;
-      const { body: newTokens } = await makePutRequest(resfreshPath)
+      const { body: newTokens } = await makeRequest(resfreshPath, 'put')
         .auth(accessToken, { type: 'bearer' })
         .send({ refreshToken });
       const result = await RefreshTokenModel.exists({
@@ -95,13 +90,14 @@ describe('User route', () => {
     });
 
     it('should accept expired token', async () => {
-      const timer = sinon.useFakeTimers(moment().subtract(1, 'day'));
-      const { body: tokens } = await makePostRequest(registerPath)
+      const timer = sinon.useFakeTimers();
+      const { body: tokens } = await makeRequest(registerPath)
         .expect(200)
         .send(userRequest);
       const { accessToken, refreshToken } = tokens;
       timer.restore();
-      const result = await makePutRequest(resfreshPath)
+
+      const result = await makeRequest(resfreshPath, 'put')
         .auth(accessToken, { type: 'bearer' })
         .expect(200)
         .send({ refreshToken });

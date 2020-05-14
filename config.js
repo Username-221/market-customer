@@ -37,7 +37,7 @@ const config = {
     length: 64,
     rounds: 2245,
     jwtOptions: {
-      expiresIn: '15m',
+      expiresIn: 15 * 60,
     },
   },
   smtp: {
@@ -52,12 +52,5 @@ const config = {
     },
   },
 };
-
-// if (DB_USER) {
-//   config.db.auth = {
-//     user: DB_USER,
-//     password: DB_PASSWORD,
-//   };
-// }
 
 module.exports = config;
