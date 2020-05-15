@@ -19,7 +19,7 @@ class OrderService {
   }
 
   async updateStatus(id, status) {
-    await this.OrderModel.updateOne(id, { status });
+    await this.OrderModel.updateOne(id, { $set: { status } });
     this.logger.info('Order status updated', { id, status });
   }
 }

@@ -104,9 +104,11 @@ class UserService {
     const restoreToken = generateRestoreToken();
     const hashedToken = await encryptPassword(restoreToken);
     await this.UserModel.updateOne({ email }, {
-      restore: {
-        token: hashedToken,
-        exp: moment().add(30, 'minutes'),
+      $set: {
+        restore: {
+          token: hashedToken,
+          exp: moment().add(30, 'minutes'),
+        },
       },
     });
     return restoreToken.toString('hex');

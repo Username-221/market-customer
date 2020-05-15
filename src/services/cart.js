@@ -9,6 +9,10 @@ class CartService {
     this.logger = logger;
   }
 
+  async get(id) {
+    return this.CartModel.findById(id).lean();
+  }
+
   async addToCart(id = Types.ObjectId(), productInCart) {
     await this.CartModel.updateOne(id, {
       $push: {
