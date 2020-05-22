@@ -4,17 +4,17 @@ class CartService {
   /**
    * @param {types.DependencyContainer} container -
    */
-  constructor({ CartModel, logger }) {
-    this.CartModel = CartModel;
+  constructor({ OrderModel, logger }) {
+    this.OrderModel = OrderModel;
     this.logger = logger;
   }
 
   async get(id) {
-    return this.CartModel.findById(id).lean();
+    return this.OrderModel.findById(id).lean();
   }
 
   async addToCart(id = Types.ObjectId(), productInCart) {
-    await this.CartModel.updateOne(id, {
+    await this.OrderModel.updateOne(id, {
       $push: {
         products: productInCart,
       },
@@ -25,7 +25,7 @@ class CartService {
   }
 
   async removeFromCart(id, productId) {
-    await this.CartModel.updateOne(id, {
+    await this.OrderModel.updateOne(id, {
       $pull: {
         products: { productId },
       },
@@ -33,7 +33,7 @@ class CartService {
   }
 
   async clearCart(id) {
-    const result = await this.CartModel.deleteOne(id);
+    const result = await this.OrderModel.deleteOne(id);
     return result;
   }
 }

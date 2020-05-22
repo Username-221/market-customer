@@ -24,6 +24,12 @@ const productSchema = new Schema({
 });
 
 productSchema.index({
+  price: 1,
+}, {
+  name: 'price',
+});
+
+productSchema.index({
   name: 'text',
   description: 'text',
   'specs.value': 'text',
