@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 const { expect } = require('chai');
-const supertest = require('supertest');
 const sinon = require('sinon');
-const app = require('../../src/app');
 const { userRequest } = require('../fixtures/user');
+const { makeRequest } = require('../utils/agent');
 const {
   UserModel,
   RefreshTokenModel,
@@ -13,15 +12,10 @@ const {
 describe('User route', () => {
   const userPath = '/api/user';
   const registerPath = `${userPath}/register`;
-  const agent = supertest.agent(app);
-
-  /** @returns {supertest.Test} */
-  const makeRequest = (uri, method = 'post') => agent[method](uri)
-    .set('Content-Type', 'application/json');
 
   beforeEach(async () => {
-    await UserModel.remove({});
-    await RefreshTokenModel.remove({});
+    await UserModel.deleteMany({});
+    await RefreshTokenModel.deleteMany({});
   });
 
   describe('POST /register', () => {
@@ -90,7 +84,7 @@ describe('User route', () => {
     });
 
     it('should accept expired token', async () => {
-      const timer = sinon.useFakeTimers();
+      const timer = sinon.useFakeTimers(0);
       const { body: tokens } = await makeRequest(registerPath)
         .expect(200)
         .send(userRequest);

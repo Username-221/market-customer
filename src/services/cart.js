@@ -1,19 +1,26 @@
-const { Types } = require('mongoose');
+const { ObjectId } = require('mongoose').Types;
+const errors = require('http-errors');
 
 class CartService {
   /**
    * @param {types.DependencyContainer} container -
    */
-  constructor({ OrderModel, logger }) {
+  constructor({ OrderModel, ProductModel, logger }) {
     this.OrderModel = OrderModel;
+    this.ProductModel = ProductModel;
     this.logger = logger;
   }
 
   async get(id) {
-    return this.OrderModel.findById(id).lean();
+    return this.OrderModel.findById(id)
+      .populate('products.product')
+      .lean();
   }
 
-  async addToCart(id = Types.ObjectId(), productInCart) {
+  async addToCart(id = ObjectId(), productInCart) {
+    const isProductExists = await this.ProductModel.exists({ _id: productInCart.id });
+    if (!isProductExists) throw errors(400, 'Incorrect data');
+
     await this.OrderModel.updateOne(id, {
       $push: {
         products: productInCart,

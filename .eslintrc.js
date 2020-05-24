@@ -20,6 +20,7 @@ module.exports = {
   ],
   rules: {
     'arrow-parens': 0,
+    'no-underscore-dangle': 0,
     'jsdoc/no-undefined-types': 0,
     'jsdoc/require-param': 0,
     'jsdoc/require-returns-description': 0,

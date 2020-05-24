@@ -9,8 +9,8 @@ router.get('/', async (_req, res) => {
 });
 
 router.get('/search', async (req, res) => {
-  const { query } = req.query;
-  const cart = await cartService.get(query);
+  const { id } = req.query;
+  const cart = await cartService.get(id);
   res.json(cart);
 });
 

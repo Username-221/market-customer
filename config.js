@@ -17,12 +17,16 @@ const {
   SMTP_FROM,
   SMTP_USER,
   SMTP_PASS,
+  PORT,
 } = process.env;
 
 /**
  * @type {types.ProjectConfig}
  */
 const config = {
+  app: {
+    port: PORT || '3000',
+  },
   db: {
     uri: DB_URI || 'mongodb://127.0.0.1:27017',
     dbName: DB_NAME || 'market',

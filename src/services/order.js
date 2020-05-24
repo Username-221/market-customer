@@ -1,3 +1,5 @@
+const { ObjectId } = require('mongoose').Types;
+
 class OrderService {
   /**
    * @param {types.DependencyContainer} container -
@@ -15,7 +17,7 @@ class OrderService {
   }
 
   async getOrder(id) {
-    return this.OrderModel.findOne(id).lean();
+    return this.OrderModel.findById(ObjectId(id)).lean();
   }
 
   async updateStatus(id, status) {

@@ -18,7 +18,6 @@ const morganOpts = { stream: { write: str => logger.info(str) } };
 
 app.use(morgan('combined', morganOpts));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, '../public')));
 app.use(passport.initialize());
