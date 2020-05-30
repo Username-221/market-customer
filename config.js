@@ -2,10 +2,10 @@ const { join } = require('path');
 const { config: loadEnv } = require('dotenv');
 
 const environment = process.env.NODE_ENV;
-const envSuffix = environment === 'test' || environment === 'production'
+const envPrefix = environment === 'test' || environment === 'production'
   ? '.'.concat(environment)
   : '';
-loadEnv({ path: join(__dirname, `.env${envSuffix}`) });
+loadEnv({ path: join(__dirname, `${envPrefix}.env`) });
 
 const {
   AUTH_SECRET,
